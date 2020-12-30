@@ -3,11 +3,18 @@ import os
 import cv2
  
 KNOWN_IMAGES_DIR = "known_photos"
-UNKNOWN_IMAGES_DIR = "unknown_phots"
+UNKNOWN_IMAGES_DIR = "unknown_photos"
+
 TOLERANCE = 0.6
 FRAME_THICKNESS = 3
 FONT_THICKNESS = 2
 MODEL = "cnm" #hog
+
+def name_to_color(name):
+    # Take 3 first letters, tolower()
+    # lowercased character ord() value rage is 97 to 122, substract 97, multiply by 8
+    color = [(ord(c.lower())-97)*8 for c in name[:3]]
+    return color
 
 print('loading_known_faces')
 
@@ -20,11 +27,9 @@ for  name in os.listdir(KNOWN_IMAGES_DIR):
         encoding = face_recognition.face_encodings(image)[0]
         known_faces.append(encoding)
         known_names.append(name)
-
-
 print('Finding Unkown faces')
 for filename in os.listdir(UNKNOWN_IMAGES_DIR):
-    print(filename)
+    print(f'Filename{filename}', end='')
     image = face_recognition.load_image_file(f'{UNKNOWN_IMAGES_DIR}/{filename}')
     locations = face_recognition.face_locations(image, model=MODEL)
     encodings = face_recognition.face_encodings(image, locations)
@@ -49,7 +54,7 @@ for filename in os.listdir(UNKNOWN_IMAGES_DIR):
             cv2.putText(image,match,(face_location[3]+10,face_location[2]+15), cv2.FONT_HERSHEY_SIMPLEX,0.5,(200,200,200),FONT_THICKNESS)
 
     cv2.imshow(filename,image)
-    cv2.waitKey(10000)
+    cv2.waitKey(100)
    
  
 
